@@ -1,0 +1,31 @@
+# "org" ensures this Service is used with the correct Serverless Framework Access Key.
+org: lateral
+# "app" enables Serverless Framework Dashboard features and sharing them with other Services.
+app: lateral
+# "service" is the name of this project. This will also be added to your AWS resource names.
+service: lateral
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  
+functions:
+  hello: 
+    handler: handler.hello 
+
+custom: 
+  tableName: file-table
+
+resources:
+  Resources:
+    FileTable: 
+      Type: AWS::DynamoDB::Table 
+      Properties: 
+        TableName: ${self:custom.tableName}
+        AttributeDefinitions: 
+          - AttributeName: userId 
+            AttributeType: S 
+        KeySchema: 
+          - AttributeName: userId 
+            KeyType: HASH 
+        BillingMode: PAY_PER_REQUEST 
