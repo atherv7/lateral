@@ -2,7 +2,7 @@
 import AWS from 'aws-sdk';
 import bcrypt from 'bcrypt';
 
-module.exports.handler = async (event) => {
+module.exports.handler = async event => {
   const {
     username,
     password
