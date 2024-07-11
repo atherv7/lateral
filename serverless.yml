@@ -8,24 +8,76 @@ service: lateral
 provider:
   name: aws
   runtime: nodejs20.x
-  
-functions:
-  hello: 
-    handler: handler.hello 
+  environment:
+    DYNAMO_USER_TABLE: ${self:custom.dynamodb.tableName}
+    JWT_SECRET: not_the_actual_jwt_secret
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - "dynamodb:Query"
+        - "dynamodb:PutItem"
+      Resources:
+        - arn:aws:dynamodb:#{AWS::Region}:#{AWS::AccountId:table}/${self:custom.dynamodb.tableName}
+        - arn:aws:dynamodb:#{AWS::Region}:#{AWS::AccountId:table}/${self:custom.dynamodb.tableName}/index/username
 
-custom: 
-  tableName: file-table
+
+plugins:
+  - serverless-pseudo-parameters
+  - serverless-s3-sync
+
+functions:
+  validateUser:
+    handler: endpoints/validateUser.handler
+  loginUser:
+    handler: endpoints/loginUser.handler
+    events:
+      - http:
+          method: post
+          cors: true
+          path: /version1/user/login
+          request:
+            schema:
+              application/json: ${file(schema/loginUserRequest.json)}
+  createUser:
+    handler: endpoints/createUser.handler
+    events:
+      - http:
+          method: post
+          cors: true
+          path: /version1/user/create
+          request:
+            schema:
+              application/json: ${file(schema/createUserRequest.json)}
+  # uploadFile:
+  #   handler: endpoints/uploadFile.handler
+  #   events:
+  #     - http:
+  #         method: post
+  #         cors: true
+  #         path: /version1/pass/upload
+  #         authorizer: validateUser 
+
+custom:
+  dynamodb:
+    tableName: user-table
+  s3Sync:
+    - bucketName: lateralFilePassingBucket-1100
+      localDir: uploadFiles
 
 resources:
   Resources:
-    FileTable: 
-      Type: AWS::DynamoDB::Table 
-      Properties: 
-        TableName: ${self:custom.tableName}
-        AttributeDefinitions: 
-          - AttributeName: userId 
-            AttributeType: S 
-        KeySchema: 
-          - AttributeName: userId 
-            KeyType: HASH 
-        BillingMode: PAY_PER_REQUEST 
+    FileBucketUpload:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: lateralFilePassingBucket-1100
+    UserTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.dynamodb.tableName}
+        AttributeDefinitions:
+          - AttributeName: username
+            AttributeType: S
+        KeySchema:
+          - AttributeName: username
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
