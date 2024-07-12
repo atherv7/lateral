@@ -1,0 +1,120 @@
+# "org" ensures this Service is used with the correct Serverless Framework Access Key.
+org: lateral
+# "app" enables Serverless Framework Dashboard features and sharing them with other Services.
+app: lateral
+# "service" is the name of this project. This will also be added to your AWS resource names.
+service: lateral
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  environment:
+    DYNAMO_USER_TABLE: ${self:custom.dynamodb.userTableName}
+    JWT_SECRET: not_the_actual_jwt_secret
+    S3_FILE_BUCKET: ${self:custom.s3Sync.bucketName}
+    DYNAMO_PASS_TABLE: ${self:custom.dynamodb.passingTableName}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - "dynamodb:Query"
+        - "dynamodb:PutItem"
+      Resources:
+        - arn:aws:dynamodb:#{AWS::Region}:#{AWS::AccountId:table}/${self:custom.dynamodb.userTableName}
+        - arn:aws:dynamodb:#{AWS::Region}:#{AWS::AccountId:table}/${self:custom.dynamodb.userTableName}/index/username
+        - arn:aws:dynamodb:#{AWS::Region}:#{AWS::AccountId:table}/${self:custom.dynamodb.passingTableName}
+    - Effect: Allow
+      Action:
+        - "s3:GetObject"
+        - "s3:PutObject"
+      Resources:
+        - arn:aws:s3:::${self:custom.s3Sync.bucketName}
+
+
+plugins:
+  - serverless-pseudo-parameters
+  - serverless-s3-sync
+
+functions:
+  validateUser:
+    handler: src/endpoints/validateUser.handler
+  contactReciever:
+    handler: src/endpoints/contactReciever.handler
+    events:
+      - s3:
+          bucket: ${self:custom.s3Sync.bucketName}
+          event: s3:ObjectCreated:*
+  loginUser:
+    handler: src/endpoints/loginUser.handler
+    events:
+      - http:
+          method: post
+          cors: true
+          path: /version1/user/login
+          request:
+            schema:
+              application/json: ${file(src/schema/loginUserRequest.json)}
+  createUser:
+    handler: src/endpoints/createUser.handler
+    events:
+      - http:
+          method: post
+          cors: true
+          path: /version1/user/create
+          request:
+            schema:
+              application/json: ${file(src/schema/createUserRequest.json)}
+  uploadFile:
+    handler: src/endpoints/uploadFile.handler
+    events:
+      - http:
+          method: post
+          cors: true
+          path: /version1/pass/upload
+          authorizer: validateUser
+          request:
+              schema:
+                application/json: ${file(src/schema/uploadFileRequest.json)}
+
+custom:
+  dynamodb:
+    userTableName: user-table
+    passingTableName: passing-table
+  s3Sync:
+    bucketName: lateralFilePassingBucket-1100
+
+resources:
+  Resources:
+    FileBucketUpload:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: lateralFilePassingBucket-1100
+    UserTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.dynamodb.userTableName}
+        AttributeDefinitions:
+          - AttributeName: username
+            AttributeType: S
+        KeySchema:
+          - AttributeName: username
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+    PassingTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.dynamodb.passingTableName}
+        AttributeDefinitions:
+          - AttributeName: passer
+            AttributeType: S
+          - AttributeName: reciever
+            AttributeType: S
+          - AttributeName: fileName
+            AttributeType: S
+        KeySchema:
+          - AttributeName: passer
+            KeyType: HASH
+          - AttributeName: reciever
+            KeyType: HASH
+          - AttributeName: fileName
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
