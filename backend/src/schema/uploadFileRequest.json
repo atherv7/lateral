@@ -1,0 +1,37 @@
+{
+    "definitions": {},
+    "$schema": "http://json-schema.org/draft-04/schema",
+    "type": "object",
+    "title": "Upload File Schema",
+    "required": [
+      "passer",
+      "reciever", 
+      "fileName", 
+      "file"
+    ],
+    "properties": {
+      "passer": {
+        "title": "passer",
+        "type": "string",
+        "minLength": 3,
+        "maxLength": 50
+      },
+      "reciever": {
+        "title": "reciever",
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 50
+      }, 
+      "fileName": {
+        "title": "fileName", 
+        "type": "string", 
+        "minLength": 3, 
+        "maxLength": 50 
+      }, 
+      "file": {
+        "title": "file", 
+        "type": "object"
+      }
+    }
+  }
+  
