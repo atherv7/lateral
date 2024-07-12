@@ -1,2 +1,5 @@
 node_modules
 .serverless
+.DS_Store
+backend/.DS_Store
+backend/node_modules
