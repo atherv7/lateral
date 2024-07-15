@@ -14,20 +14,20 @@ provider:
     S3_FILE_BUCKET: ${self:custom.s3Sync.bucketName}
     DYNAMO_PASS_TABLE: ${self:custom.dynamodb.passingTableName}
   iamRoleStatements:
-    - Effect: Allow
+    - Effect: "Allow"
       Action:
         - "dynamodb:Query"
         - "dynamodb:PutItem"
       Resource:
-        - arn:aws:dynamodb:#{AWS::Region}:#{AWS::AccountId:table}/${self:custom.dynamodb.userTableName}
-        - arn:aws:dynamodb:#{AWS::Region}:#{AWS::AccountId:table}/${self:custom.dynamodb.userTableName}/index/username
-        - arn:aws:dynamodb:#{AWS::Region}:#{AWS::AccountId:table}/${self:custom.dynamodb.passingTableName}
-    - Effect: Allow
+        - !Sub "arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/${self:custom.dynamodb.userTableName}"
+        - !Sub "arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/${self:custom.dynamodb.userTableName}/index/username"
+        - !Sub "arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/${self:custom.dynamodb.passingTableName}"
+    - Effect: "Allow"
       Action:
         - "s3:GetObject"
         - "s3:PutObject"
       Resource:
-        - arn:aws:s3:::${self:custom.s3Sync.bucketName}
+        - "arn:aws:s3:::${self:custom.s3Sync.bucketName}/*"
 
 
 plugins:
@@ -42,6 +42,7 @@ functions:
       - s3:
           bucket: ${self:custom.s3Sync.bucketName}
           event: s3:ObjectCreated:*
+          existing: true 
   loginUser:
     handler: src/endpoints/loginUser.handler
     events:
@@ -80,6 +81,8 @@ custom:
     passingTableName: passing-table
   s3Sync:
     bucketName: lateral-file-passing-bucket-1100
+    prefix: s3bucket
+    localDir: ./s3bucket
 
 resources:
   Resources:
@@ -112,8 +115,15 @@ resources:
         KeySchema:
           - AttributeName: passer
             KeyType: HASH
-          - AttributeName: reciever
-            KeyType: HASH
           - AttributeName: fileName
-            KeyType: HASH
+            KeyType: RANGE
+        GlobalSecondaryIndexes: 
+          - IndexName: RecieverIndex 
+            KeySchema: 
+              - AttributeName: reciever 
+                KeyType: HASH
+              - AttributeName: fileName 
+                KeyType: RANGE 
+            Projection: 
+              ProjectionType: ALL
         BillingMode: PAY_PER_REQUEST
