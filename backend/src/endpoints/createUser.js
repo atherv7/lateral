@@ -17,7 +17,7 @@ module.exports.handler = async event => {
 
   try {
     const dynamo = new AWS.DynamoDB.DocumentClient();
-    const putResponse = await dynamo.put(newUser).promise();
+    await dynamo.put(newUser).promise();
 
     return {
       statusCode: 201,
@@ -26,7 +26,7 @@ module.exports.handler = async event => {
         'Access-Control-Allow-Credentials': true,
         'Access-Control-Allow-Headers': 'Authorization'
       }
-    }
+    }; 
   }
   catch(error) {
     console.log('there was an error inserting user');

@@ -1,6 +1,6 @@
 'use strict';
-import {bcrypt} from 'bcrypt';
-import {jwt} from 'jsonwebtoken';
+const bcrypt = require('bcrypt'); 
+const jwt = require('jsonwebtoken'); 
 
 module.exports.handler = async event => {
   const {
