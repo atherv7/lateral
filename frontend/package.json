@@ -1,0 +1,17 @@
+{
+  "name": "frontend",
+  "productName": "lateral",
+  "version": "1.0.0",
+  "description": "frontend for app that passes files. ",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "electron ."
+  },
+  "author": "Atharv Ghone",
+  "license": "MIT",
+  "dependencies": {
+    "electron": "^31.2.1",
+    "path": "^0.12.7"
+  }
+}
