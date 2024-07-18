@@ -1,16 +1,44 @@
 const path = require('path'); 
-const { app, BrowserWindow } = require('electron'); 
+const { app, BrowserWindow, ipcMain, net } = require('electron'); 
+
+const macintosh = process.platform == 'darwin'; 
 
 function createHomeWindow() {
     const homeWindow = new BrowserWindow({
         title: 'lateral', 
-        width: 600, 
+        width: 1100, 
         height: 500 
     }); 
 
-    homeWindow.loadFile(path.join(__dirname, './gu_interface/home.html')); 
+    homeWindow.webContents.openDevTools(); 
+
+    // production build 
+    // const startUrl = url.format({
+    //     pathname: path.join(__dirname, './app/index.html'), 
+    //     protocol: 'file'
+    // }); 
+    // homeWindow.loadURL(startUrl); 
+
+    //dev build 
+    homeWindow.loadURL('http://localhost:3000/'); 
 }
 
 app.whenReady().then(()=>{
     createHomeWindow(); 
+
+    app.on('activate', () => {
+        if(BrowserWindow.getAllWindows().length === 0) {
+            createHomeWindow(); 
+        }
+    })
+}); 
+
+app.on('window-all-closed', ()=>{
+    if(!macintosh) {
+        app.quit(); 
+    }
+}); 
+
+ipcMain.handle("logUser", () => {
+    const req = net.request(""); 
 }); 

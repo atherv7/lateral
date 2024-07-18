@@ -25,7 +25,8 @@ module.exports.handler = async event => {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Credentials': true,
         'Access-Control-Allow-Headers': 'Authorization'
-      }
+      },
+      body: {"message": "logged"}
     }; 
   }
   catch(error) {
