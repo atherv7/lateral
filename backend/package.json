@@ -5,7 +5,10 @@
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.585.0",
     "@aws-sdk/lib-dynamodb": "^3.585.0",
+    "bcrypt": "^5.1.1",
     "express": "^4.19.2",
-    "serverless-http": "^3.2.0"
+    "serverless": "^3.39.0",
+    "serverless-http": "^3.2.0",
+    "serverless-s3-sync": "^3.3.0"
   }
 }

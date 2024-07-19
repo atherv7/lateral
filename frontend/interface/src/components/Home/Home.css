@@ -1,0 +1,53 @@
+#homepage {
+    height: 100vh;
+    width: 100vw;
+    background-color: #262020;
+    padding: 0;
+    margin: 0;
+}
+
+#login_option_holder {
+  position: absolute;
+  right: 0;
+  height: 100vh;
+  width: 30vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding: 2%;
+  background-color: #202626;
+  border-left-style: solid;
+  border-left-color: #D0C8C8;
+}
+
+#login_option_holder button {
+  margin-bottom: 1rem;
+  width: 90%;
+  padding-top: 0.4rem;
+  padding-bottom: 0.4rem;
+}
+
+#login_option_holder hr {
+  width: 100%;
+  margin-bottom: 2rem;
+  margin-top: 1rem;
+}
+
+#login_option_holder h1 {
+  color: #D0C8C8;
+  font-size: 3rem;
+}
+
+#login_form {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+#login_form input[type=text] {
+  margin-bottom: 2vh;
+  padding: 0.2rem;
+  width: 25rem;
+}

@@ -14,24 +14,22 @@ provider:
     S3_FILE_BUCKET: ${self:custom.s3Sync.bucketName}
     DYNAMO_PASS_TABLE: ${self:custom.dynamodb.passingTableName}
   iamRoleStatements:
-    - Effect: Allow
+    - Effect: "Allow"
       Action:
         - "dynamodb:Query"
         - "dynamodb:PutItem"
-      Resources:
-        - arn:aws:dynamodb:#{AWS::Region}:#{AWS::AccountId:table}/${self:custom.dynamodb.userTableName}
-        - arn:aws:dynamodb:#{AWS::Region}:#{AWS::AccountId:table}/${self:custom.dynamodb.userTableName}/index/username
-        - arn:aws:dynamodb:#{AWS::Region}:#{AWS::AccountId:table}/${self:custom.dynamodb.passingTableName}
-    - Effect: Allow
+      Resource:
+        - !Sub "arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/${self:custom.dynamodb.userTableName}"
+        - !Sub "arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/${self:custom.dynamodb.userTableName}/index/username"
+        - !Sub "arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/${self:custom.dynamodb.passingTableName}"
+    - Effect: "Allow"
       Action:
         - "s3:GetObject"
         - "s3:PutObject"
-      Resources:
-        - arn:aws:s3:::${self:custom.s3Sync.bucketName}
-
+      Resource:
+        - "arn:aws:s3:::${self:custom.s3Sync.bucketName}/*"
 
 plugins:
-  - serverless-pseudo-parameters
   - serverless-s3-sync
 
 functions:
@@ -43,6 +41,7 @@ functions:
       - s3:
           bucket: ${self:custom.s3Sync.bucketName}
           event: s3:ObjectCreated:*
+          existing: true 
   loginUser:
     handler: src/endpoints/loginUser.handler
     events:
@@ -51,7 +50,7 @@ functions:
           cors: true
           path: /version1/user/login
           request:
-            schema:
+            schemas:
               application/json: ${file(src/schema/loginUserRequest.json)}
   createUser:
     handler: src/endpoints/createUser.handler
@@ -61,7 +60,7 @@ functions:
           cors: true
           path: /version1/user/create
           request:
-            schema:
+            schemas:
               application/json: ${file(src/schema/createUserRequest.json)}
   uploadFile:
     handler: src/endpoints/uploadFile.handler
@@ -72,7 +71,7 @@ functions:
           path: /version1/pass/upload
           authorizer: validateUser
           request:
-              schema:
+              schemas:
                 application/json: ${file(src/schema/uploadFileRequest.json)}
 
 custom:
@@ -80,14 +79,16 @@ custom:
     userTableName: user-table
     passingTableName: passing-table
   s3Sync:
-    bucketName: lateralFilePassingBucket-1100
+    bucketName: lateral-file-passing-bucket-1100
+    prefix: s3bucket
+    localDir: ./s3bucket
 
 resources:
   Resources:
     FileBucketUpload:
       Type: AWS::S3::Bucket
       Properties:
-        BucketName: lateralFilePassingBucket-1100
+        BucketName: ${self:custom.s3Sync.bucketName}
     UserTable:
       Type: AWS::DynamoDB::Table
       Properties:
@@ -113,8 +114,15 @@ resources:
         KeySchema:
           - AttributeName: passer
             KeyType: HASH
-          - AttributeName: reciever
-            KeyType: HASH
           - AttributeName: fileName
-            KeyType: HASH
+            KeyType: RANGE
+        GlobalSecondaryIndexes: 
+          - IndexName: RecieverIndex 
+            KeySchema: 
+              - AttributeName: reciever 
+                KeyType: HASH
+              - AttributeName: fileName 
+                KeyType: RANGE 
+            Projection: 
+              ProjectionType: ALL
         BillingMode: PAY_PER_REQUEST

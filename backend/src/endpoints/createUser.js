@@ -1,24 +1,23 @@
 'use strict';
-import AWS from 'aws-sdk';
-import bcrypt from 'bcrypt';
+const AWS = require('aws-sdk');
+const bcrypt = require('bcrypt'); 
 
 module.exports.handler = async event => {
-  const {
-    username,
-    password
-  } = JSON.parse(event.body);
+  const reqBody = JSON.parse(event.body); 
+  const username = reqBody.username; 
+  const password = reqBody.password; 
 
   const newUser = {
     TableName: process.env.DYNAMO_USER_TABLE,
     Item: {
-      username,
-      bcrypt.hashSync(password, 10),
+      username: username,
+      password: bcrypt.hashSync(password, 10),
     },
   };
 
   try {
     const dynamo = new AWS.DynamoDB.DocumentClient();
-    const putResponse = await dynamo.put(newUser).promise();
+    await dynamo.put(newUser).promise();
 
     return {
       statusCode: 201,
@@ -26,8 +25,9 @@ module.exports.handler = async event => {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Credentials': true,
         'Access-Control-Allow-Headers': 'Authorization'
-      }
-    }
+      },
+      body: {"message": "logged"}
+    }; 
   }
   catch(error) {
     console.log('there was an error inserting user');

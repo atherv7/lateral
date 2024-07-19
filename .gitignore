@@ -1,2 +1,8 @@
 node_modules
 .serverless
+.DS_Store
+backend/.DS_Store
+backend/node_modules
+frontend/node_modules
+frontend/interface/node_modules
+frontend/interface/.env
