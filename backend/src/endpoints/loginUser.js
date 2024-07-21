@@ -1,5 +1,6 @@
 'use strict';
 const bcrypt = require('bcrypt'); 
+const AWS = require('aws-sdk'); 
 const jwt = require('jsonwebtoken'); 
 
 module.exports.handler = async event => {
@@ -35,7 +36,7 @@ module.exports.handler = async event => {
     const comparisonResult = bcrypt.compareSync(password, user.password);
 
     if(comparisonResult) {
-      let token = jwt.sign({
+      const token = jwt.sign({
         username: user.username,
       }, process.env.JWT_SECRET);
       return {
@@ -43,6 +44,24 @@ module.exports.handler = async event => {
         body: JSON.stringify({token:token})
       };
     }
+  }
+  else if(userResult.Count === 0) {
+    const lambda = new AWS.Lambda({
+      region: process.env.APP_REGION 
+    }); 
+
+    await lambda.invoke({
+      FunctionName: 'arn:aws:lambda:us-east-1:590184069945:function:lateral-dev-createUser', 
+      Payload: event.body 
+    }).promise();
+    
+    const token = jwt.sign({
+      username: username, 
+    }, process.env.JWT_SECRET); 
+    return {
+      statusCode: 200, 
+      body: JSON.stringify({token: token}) 
+    };
   }
 
   return {

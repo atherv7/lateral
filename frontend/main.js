@@ -52,7 +52,7 @@ ipcMain.on('submit:loginForm', async (event, options) => {
     const stringPostData = JSON.stringify(postData); 
     try {
         const response = await fetch(
-            'https://dadsso6fxc.execute-api.us-east-1.amazonaws.com/dev/version1/user/create', 
+            'https://dadsso6fxc.execute-api.us-east-1.amazonaws.com/dev/version1/user/login', 
             {
                 method: 'POST', 
                 headers: {
@@ -64,8 +64,9 @@ ipcMain.on('submit:loginForm', async (event, options) => {
                 body: stringPostData
             }
         ); 
+        const message = await response.json(); 
         console.log('successfully created user'); 
-        console.log(response); 
+        console.log(message); 
     }
     catch(error) {
         console.log('error creating user'); 

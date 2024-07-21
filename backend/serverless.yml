@@ -13,6 +13,7 @@ provider:
     JWT_SECRET: not_the_actual_jwt_secret
     S3_FILE_BUCKET: ${self:custom.s3Sync.bucketName}
     DYNAMO_PASS_TABLE: ${self:custom.dynamodb.passingTableName}
+    APP_REGION: 'us-east-1'
   iamRoleStatements:
     - Effect: "Allow"
       Action:
@@ -28,6 +29,11 @@ provider:
         - "s3:PutObject"
       Resource:
         - "arn:aws:s3:::${self:custom.s3Sync.bucketName}/*"
+    - Effect: "Allow"
+      Action: 
+        - "lambda:InvokeFunction"
+      Resource: 
+        - !Sub "arn:aws:lambda:${aws:region}:${aws:accountId}:function:lateral-dev-createUser"
 
 plugins:
   - serverless-s3-sync
@@ -54,14 +60,6 @@ functions:
               application/json: ${file(src/schema/loginUserRequest.json)}
   createUser:
     handler: src/endpoints/createUser.handler
-    events:
-      - http:
-          method: post
-          cors: true
-          path: /version1/user/create
-          request:
-            schemas:
-              application/json: ${file(src/schema/createUserRequest.json)}
   uploadFile:
     handler: src/endpoints/uploadFile.handler
     events:
