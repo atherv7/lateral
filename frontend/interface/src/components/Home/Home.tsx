@@ -1,14 +1,13 @@
 import './Home.css';
-import {useState} from 'react';
+import { useState } from 'react';
 
 export default function Home() {
     const [username, changeUsername] = useState('');
     const [password, changePassword] = useState('');
+    const ipcRenderer = (window as any).ipcRenderer; 
 
     function handleRequest() {
-        console.log('handeling request');
-        console.log(`username: ${username}`);
-        console.log(`password: ${password}`);
+      ipcRenderer.send('submit:loginForm', [username, password]); 
     }
 
     return (

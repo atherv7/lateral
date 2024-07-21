@@ -1,13 +1,18 @@
 const path = require('path');
-const { app, BrowserWindow } = require('electron');
-
+const { app, BrowserWindow, ipcMain } = require('electron');
+const fetch = require('electron-fetch').default; 
 const macintosh = process.platform == 'darwin';
 
 function createHomeWindow() {
     const homeWindow = new BrowserWindow({
         title: 'lateral',
         width: 1100,
-        height: 500
+        height: 500, 
+        webPreferences: {
+            contextIsolation: true, 
+            nodeIntegration: true, 
+            preload: path.join(__dirname, 'preload.js')
+        }
     });
 
     homeWindow.webContents.openDevTools();
@@ -38,3 +43,33 @@ app.on('window-all-closed', ()=>{
         app.quit();
     }
 });
+
+ipcMain.on('submit:loginForm', async (event, options) => {
+    const postData = {
+        "username": options[0], 
+        "password": options[1]
+    }; 
+    const stringPostData = JSON.stringify(postData); 
+    try {
+        const response = await fetch(
+            'https://dadsso6fxc.execute-api.us-east-1.amazonaws.com/dev/version1/user/create', 
+            {
+                method: 'POST', 
+                headers: {
+                    'Content-Type': 'application/json', 
+                    'Content-Length': Buffer.byteLength(stringPostData),
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Credentials': true
+                }, 
+                body: stringPostData
+            }
+        ); 
+        console.log('successfully created user'); 
+        console.log(response); 
+    }
+    catch(error) {
+        console.log('error creating user'); 
+        console.log(error); 
+    }
+    
+}); 
