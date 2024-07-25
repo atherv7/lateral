@@ -1,13 +1,14 @@
 import './Home.css';
 import { useState } from 'react';
+import React from 'react';
 
-export default function Home() {
+const Home:React.FC = () => {
     const [username, changeUsername] = useState('');
     const [password, changePassword] = useState('');
-    const ipcRenderer = (window as any).ipcRenderer; 
+    const ipcRenderer = (window as any).ipcRenderer;
 
     function handleRequest() {
-      ipcRenderer.send('submit:loginForm', [username, password]); 
+      ipcRenderer.send('submit:loginForm', [username, password]);
     }
 
     return (
@@ -34,4 +35,6 @@ export default function Home() {
           </div>
         </div>
     );
-}
+};
+
+export default Home;

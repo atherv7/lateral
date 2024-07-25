@@ -1,9 +1,15 @@
-import './Main.css'; 
+import './Main.css';
+import PassForm from './../PassForm/PassForm';
+import NotifTab from './../NotifTab/NotifTab';
+import React, { useState } from 'react';
 
-export default function Main() {
+const Main:React.FC = () => {
     return (
-        <div>
-            
+        <div id="main_page">
+          <PassForm/>
+          <NotifTab/>
         </div>
-    ); 
-}
+    );
+};
+
+export default Main;
