@@ -41,6 +41,11 @@ plugins:
 functions:
   validateUser:
     handler: src/endpoints/validateUser.handler
+    events: 
+      - http: 
+          method: get 
+          cors: true 
+          path: /version1/user/validate
   contactReciever:
     handler: src/endpoints/contactReciever.handler
     events:
@@ -60,6 +65,14 @@ functions:
               application/json: ${file(src/schema/loginUserRequest.json)}
   createUser:
     handler: src/endpoints/createUser.handler
+    events: 
+      - http: 
+          method: post 
+          cors: true 
+          path: /version1/user/create
+          request: 
+            schemas: 
+              application/json: ${file(src/schema/createUserRequest.json)}
   uploadFile:
     handler: src/endpoints/uploadFile.handler
     events:

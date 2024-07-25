@@ -13,5 +13,6 @@ window.addEventListener('DOMContentLoaded', () => {
 
 
 contextBridge.exposeInMainWorld("api", {
-    login: (userInfo) => ipcRenderer.invoke('login', userInfo)
+    login: (userInfo) => ipcRenderer.invoke('login', userInfo), 
+    register: (userInfo) => ipcRenderer.invoke('register', userInfo)
 }); 

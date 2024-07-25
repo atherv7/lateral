@@ -5,38 +5,20 @@
     padding: 0;
     margin: 0;
     overflow: hidden;
+    display: flex; 
+    align-items: center;
+    justify-content: center;
 }
 
 #login_option_holder {
-  position: absolute;
-  right: 0;
-  height: 100vh;
+  height: 70vh;
   width: 30vw;
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
   background-color: #202626;
-  border-left-style: solid;
-  border-left-color: #D0C8C8;
-  overflow: hidden;
-}
-
-#login_option_holder button {
-  margin-bottom: 1rem;
-  width: 90%;
-  padding-top: 0.4rem;
-  padding-bottom: 0.4rem;
-}
-
-#login_option_holder button:hover {
-    cursor: pointer;
-}
-
-#login_option_holder hr {
-  width: 95%;
-  margin-bottom: 2rem;
-  margin-top: 1rem;
+  /* overflow: hidden; */
 }
 
 #login_option_holder h1 {
@@ -44,16 +26,65 @@
   font-size: 3rem;
 }
 
-#login_form {
+#form_holder_login {
+  height: 75%; 
+  width: 90%; 
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
   flex-direction: column;
+}
+
+#form_holder_login hr {
   width: 90%;
+  margin-top: 5%; 
+  margin-bottom: 5%;
+  border-color: #D0C8C8;
+  height: 0.2%;
+  background-color: #D0C8C8;
+  border-radius: 2rem;
+}
+
+#register_form {
+  width: 90%;
+  height: 35%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+#register_form input[type=text] {
+  padding: 2%; 
+  width: 70%; 
+  border-radius: 0.5rem;
+  border-style: none;
+  background-color: #D0C8C8;
+}
+
+#register_form * {
+  margin-top: 2%; 
+  margin-bottom: 2%; 
+}
+
+#login_form {
+  width: 90%; 
+  height: 35%; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
 }
 
 #login_form input[type=text] {
-  margin-bottom: 2vh;
-  padding: 0.2rem;
-  width: 100%;
+  padding: 2%; 
+  width: 70%; 
+  border-radius: 0.5rem;
+  border-style: none;
+  background-color: #D0C8C8;
+}
+
+#login_form * {
+  margin-top: 2%; 
+  margin-bottom: 2%; 
 }
