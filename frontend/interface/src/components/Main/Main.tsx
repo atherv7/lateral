@@ -1,7 +1,7 @@
 import './Main.css';
 import PassForm from './../PassForm/PassForm';
 import NotifTab from './../NotifTab/NotifTab';
-import React, { useState } from 'react';
+import React from 'react';
 
 const Main:React.FC = () => {
     return (

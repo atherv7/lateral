@@ -1,5 +1,5 @@
 const path = require('path');
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow, ipcMain, session } = require('electron');
 const fetch = require('electron-fetch').default; 
 const macintosh = process.platform == 'darwin';
 
@@ -44,10 +44,10 @@ app.on('window-all-closed', ()=>{
     }
 });
 
-ipcMain.on('submit:loginForm', async (event, options) => {
+ipcMain.handle('login', async (event, args) => {
     const postData = {
-        "username": options[0], 
-        "password": options[1]
+        "username": args[0], 
+        "password": args[1]
     }; 
     const stringPostData = JSON.stringify(postData); 
     try {
@@ -65,12 +65,22 @@ ipcMain.on('submit:loginForm', async (event, options) => {
             }
         ); 
         const message = await response.json(); 
-        console.log('successfully created user'); 
-        console.log(message); 
+        const token = message.token; 
+
+        await session.defaultSession.cookies.set({
+            url: 'https://dadsso6fxc.execute-api.us-east-1.amazonaws.com/dev/version1/user/login', 
+            name: 'jsonwebtoken', 
+            value: token, 
+            expirationData: Math.floor(Date.now() / 1000) + (60*60*24) // 24 hours
+        }); 
+
+        return {success: true}; 
     }
     catch(error) {
         console.log('error creating user'); 
         console.log(error); 
+
+        return {success: false}; 
     }
     
 }); 

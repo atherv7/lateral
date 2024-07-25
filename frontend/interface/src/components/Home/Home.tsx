@@ -5,10 +5,11 @@ import React from 'react';
 const Home:React.FC = () => {
     const [username, changeUsername] = useState('');
     const [password, changePassword] = useState('');
-    const ipcRenderer = (window as any).ipcRenderer;
 
-    function handleRequest() {
-      ipcRenderer.send('submit:loginForm', [username, password]);
+    async function handleRequest(event:any) {
+      event.preventDefault(); 
+      const response = await (window as any).api.login([username, password]); 
+      console.log(response); 
     }
 
     return (
@@ -19,7 +20,7 @@ const Home:React.FC = () => {
             <button id='github_signin_option'>github</button>
             <button id='facebook_signin_option'>facebook</button>
             <hr/>
-            <form id='login_form'>
+            <form id='login_form' onSubmit={event => handleRequest(event)}>
                 <input type="text"
                        name="username"
                        onChange={e => changeUsername(e.target.value)}
@@ -30,7 +31,7 @@ const Home:React.FC = () => {
                        onChange={e => changePassword(e.target.value)}
                        id="password"
                        placeholder='password'/>
-                <input type="submit" value="join" onClick={handleRequest}/>
+                <input type="submit" value="join"/>
             </form>
           </div>
         </div>
