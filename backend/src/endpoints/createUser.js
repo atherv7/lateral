@@ -1,6 +1,7 @@
 'use strict';
 const AWS = require('aws-sdk');
 const bcrypt = require('bcrypt'); 
+const jwt = require('jsonwebtoken'); 
 
 module.exports.handler = async event => {
   const reqBody = JSON.parse(event.body); 
@@ -19,6 +20,10 @@ module.exports.handler = async event => {
     const dynamo = new AWS.DynamoDB.DocumentClient();
     await dynamo.put(newUser).promise();
 
+    const token = jwt.sign({
+      username: username,
+    }, process.env.JWT_SECRET);
+
     return {
       statusCode: 201,
       headers: {
@@ -26,7 +31,10 @@ module.exports.handler = async event => {
         'Access-Control-Allow-Credentials': true,
         'Access-Control-Allow-Headers': 'Authorization'
       },
-      body: {"message": "logged"}
+      body: JSON.stringify({
+        message: "logged", 
+        token: token
+      })
     }; 
   }
   catch(error) {

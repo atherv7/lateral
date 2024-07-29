@@ -1,7 +1,6 @@
-require('functionHandling.js'); 
+require('./functionHandling.js'); 
 const path = require('path');
-const { app, BrowserWindow, ipcMain, session } = require('electron');
-const fetch = require('electron-fetch').default; 
+const { app, BrowserWindow } = require('electron');
 const macintosh = process.platform == 'darwin';
 function createHomeWindow() {
     const homeWindow = new BrowserWindow({

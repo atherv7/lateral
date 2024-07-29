@@ -58,9 +58,18 @@ module.exports.handler = async event => {
     const token = jwt.sign({
       username: username, 
     }, process.env.JWT_SECRET); 
+    
     return {
       statusCode: 200, 
-      body: JSON.stringify({token: token}) 
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Credentials': true,
+        'Access-Control-Allow-Headers': 'Authorization'
+      },
+      body: JSON.stringify({
+        message: "logged", 
+        token: token
+      }) 
     };
   }
 

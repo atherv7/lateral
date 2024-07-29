@@ -49,10 +49,9 @@ ipcMain.handle('register', async (event, args) => {
     }; 
 
     const stringPostData = JSON.stringify(postData); 
-
     try {
         const response = await fetch(
-            'https://dadsso6fxc.execute-api.us-east-1.amazonaws.com/dev/version1/user/login',
+            'https://dadsso6fxc.execute-api.us-east-1.amazonaws.com/dev/version1/user/create',
             {
                 method: 'POST', 
                 headers: {
@@ -64,8 +63,23 @@ ipcMain.handle('register', async (event, args) => {
                 body: stringPostData
             }
         );
+
+        const message = await response.json(); 
+        const token = message.token; 
+
+        await session.defaultSession.cookies.set({
+            url: 'https://dadsso6fxc.execute-api.us-east-1.amazonaws.com/dev/version1/user/create', 
+            name: 'jsonwebtoken', 
+            value: token, 
+            expirationData: Math.floor(Date.now() / 1000) + (60*60*24) // 24 hours
+        }); 
+
+        console.log('there was success logging/registering user'); 
+        return {success: true}; 
     }
     catch(error) {
-
+        console.log('there was an error logging in'); 
+        console.log(error); 
+        return {success: false}; 
     }
 });

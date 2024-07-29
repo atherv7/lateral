@@ -37,6 +37,7 @@
   transition: height 0.8s ease, width 0.8s ease;
   background-color: white;
   position: absolute;
+  overflow: hidden; 
 }
 
 #form_holder {

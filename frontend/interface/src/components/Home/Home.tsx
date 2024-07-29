@@ -10,16 +10,22 @@ const Home:React.FC = () => {
   const [usernameRegister, changeUsernameRegister] = useState<string>(''); 
   const [passwordRegister, changePasswordRegister] = useState<string>(''); 
 
-  const submitUser =  async(newUser:boolean) => {
+  const submitUser =  async (newUser:boolean) => {
+
     let success = false; 
-    if(newUser) {
-      const response = await window.api.register([usernameRegister, passwordRegister]); 
-      success = response.success; 
+    if(window.api) {
+      if(newUser) {
+        const response = await window.api.register([usernameRegister, passwordRegister]); 
+        success = response.success; 
+      }
+      else {
+        const response = await window.api.login([usernameLogin, passwordLogin]); 
+        success = response.success; 
+      }
     }
-    else {
-      const response = await window.api.login([usernameLogin, passwordLogin]); 
-      success = response.success; 
-    }
+
+
+    console.log(`user input information success: ${success}`); 
 
     if (success) {
       navigate('/main'); 
@@ -33,7 +39,10 @@ const Home:React.FC = () => {
         <div id='login_option_holder'>
           <h1>join us</h1>
           <div id='form_holder_login'>
-            <form id='register_form' onSubmit={() => submitUser(true)}>
+            <form id='register_form' onSubmit={(event:React.FormEvent<HTMLFormElement>) => {
+              event.preventDefault(); 
+              submitUser(true); 
+            }}>
               <input type="text" 
                       name="username_reg" 
                       id="username_input_reg" 
@@ -52,7 +61,10 @@ const Home:React.FC = () => {
               <input type="submit" value="register" />
             </form>
             <hr/>
-            <form id='login_form' onSubmit={() => submitUser(false)}>
+            <form id='login_form' onSubmit={(event:React.FormEvent<HTMLFormElement>) => {
+              event.preventDefault(); 
+              submitUser(false);
+            }}>
               <input type="text" 
                       name="username" 
                       id="username_input" 
