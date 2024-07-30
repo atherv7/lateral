@@ -14,5 +14,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
 contextBridge.exposeInMainWorld("api", {
     login: (userInfo) => ipcRenderer.invoke('login', userInfo), 
-    register: (userInfo) => ipcRenderer.invoke('register', userInfo)
+    register: (userInfo) => ipcRenderer.invoke('register', userInfo), 
+    selectFile: () => ipcRenderer.invoke('select-file'), 
+    friendRequest: (friendUsername) => ipcRenderer.invoke('send-friend-req', friendUsername)
 }); 

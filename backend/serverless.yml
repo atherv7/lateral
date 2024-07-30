@@ -13,6 +13,7 @@ provider:
     JWT_SECRET: not_the_actual_jwt_secret
     S3_FILE_BUCKET: ${self:custom.s3Sync.bucketName}
     DYNAMO_PASS_TABLE: ${self:custom.dynamodb.passingTableName}
+    DYNAMO_FRIEND_REQ_TABLE: ${self:custom.dynamodb.friendReqTableName}
     APP_REGION: 'us-east-1'
   iamRoleStatements:
     - Effect: "Allow"
@@ -23,6 +24,7 @@ provider:
         - !Sub "arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/${self:custom.dynamodb.userTableName}"
         - !Sub "arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/${self:custom.dynamodb.userTableName}/index/username"
         - !Sub "arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/${self:custom.dynamodb.passingTableName}"
+        - !Sub "arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/${self:custom.dynamodb.friendReqTableName}"
     - Effect: "Allow"
       Action:
         - "s3:GetObject"
@@ -46,13 +48,17 @@ functions:
           method: get 
           cors: true 
           path: /version1/user/validate
-  contactReciever:
-    handler: src/endpoints/contactReciever.handler
-    events:
-      - s3:
-          bucket: ${self:custom.s3Sync.bucketName}
-          event: s3:ObjectCreated:*
-          existing: true 
+  sendFriendRequest: 
+    handler: src/endpoints/sendFriendReq.handler 
+    events: 
+      - http: 
+          method: post 
+          cors: true 
+          authorizer: validateUser 
+          path: /version1/friends/request
+          request: 
+            schemas: 
+              application/json: ${file(src/schema/sendFriendRequest.json)}
   loginUser:
     handler: src/endpoints/loginUser.handler
     events:
@@ -89,6 +95,7 @@ custom:
   dynamodb:
     userTableName: user-table
     passingTableName: passing-table
+    friendReqTableName: friend-request-table
   s3Sync:
     bucketName: lateral-file-passing-bucket-1100
     prefix: s3bucket
@@ -110,6 +117,21 @@ resources:
         KeySchema:
           - AttributeName: username
             KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+    FriendRequestTable: 
+      Type: AWS::DynamoDB::Table
+      Properties: 
+        TableName: ${self:custom.dynamodb.friendReqTableName}
+        AttributeDefinitions: 
+          - AttributeName: friendUsername 
+            AttributeType: S
+          - AttributeName: senderUsername 
+            AttributeType: S
+        KeySchema: 
+          - AttributeName: friendUsername 
+            KeyType: HASH
+          - AttributeName: senderUsername 
+            KeyType: RANGE
         BillingMode: PAY_PER_REQUEST
     PassingTable:
       Type: AWS::DynamoDB::Table

@@ -1,0 +1,67 @@
+#friend_list {
+    position: fixed; 
+    height: 8vh; 
+    width: 12vw; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: yellow;
+    bottom: 1rem; 
+    left: 1rem; 
+    font-size: 0.5rem; 
+    transition: height 0.3s ease, 
+                width 0.3s ease, 
+                bottom 0.3s ease, 
+                right 0.3s ease; 
+    flex-direction: column; 
+    z-index: 30; 
+}
+
+#friend_list:hover {
+    cursor: pointer; 
+}
+
+#expanded_information {
+    width: 100%; 
+    margin: 0; 
+    display: none;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+#friend_close_button {
+    position: absolute; 
+    bottom: 0; 
+    height: 10vh; 
+    margin: 0; 
+    width: 100%; 
+    background-color: purple; 
+    font-size: 1.25rem; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#current_friends {
+    background-color: red; 
+    width: 90%; 
+    height: 50vh; 
+    margin-top: 5%; 
+    padding: 0.2rem; 
+}
+
+#friend_req_form {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+#friend_req_form input[type=text] {
+    padding: 0.25rem; 
+}
+
+#friend_req_form button {
+    margin-top: 2%; 
+}

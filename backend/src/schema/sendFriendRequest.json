@@ -1,0 +1,18 @@
+{
+    "definitions": {},
+    "$schema": "http://json-schema.org/draft-04/schema",
+    "type": "object",
+    "title": "Friend Request Schema",
+    "required": [
+      "friendUsername"
+    ],
+    "properties": {
+      "username": {
+        "title": "friendUsername",
+        "type": "string",
+        "minLength": 3,
+        "maxLength": 50
+      }
+    }
+  }
+  

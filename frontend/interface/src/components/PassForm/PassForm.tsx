@@ -1,5 +1,6 @@
 import './PassForm.css';
-import { useEffect } from 'react'; 
+import './PassFormSmaller.css'; 
+import { useEffect, useState } from 'react'; 
 const sleep = (ms:number) => new Promise(r => setTimeout(r, ms));
 
 const expandPass = async (
@@ -19,14 +20,22 @@ const closePass = async (
   closeButton:HTMLElement, 
   passForm:HTMLElement
 ) => {
-  closeButton.style.display = 'none !important';
-  passForm.style.display = 'none !important';
+  closeButton.style.display = 'none';
+  passForm.style.display = 'none';
   await sleep(350);
   passTab.style.height = '0rem';
   passTab.style.width = '0rem';
 }
 
 const PassForm:React.FC = () => {
+  const [filePath, setFilePath] = useState<string>('');
+
+  const selectFile = async () => {
+    const result = await window.api.selectFile(); 
+    if(result && result.length > 0) {
+      setFilePath(result[0]); 
+    }
+  }
 
   useEffect(() => {
     const passTab = document.getElementById('pass_tab')!; 
@@ -37,7 +46,8 @@ const PassForm:React.FC = () => {
       await expandPass(passTab, closeButton, passForm); 
     }); 
 
-    closeButton.addEventListener('click', async () => {
+    closeButton.addEventListener('click', async (event:MouseEvent) => {
+      event.stopPropagation(); 
       await closePass(passTab, closeButton, passForm); 
     }); 
 
@@ -50,9 +60,22 @@ const PassForm:React.FC = () => {
         <div id='pass_tab'>
           <button id='close_button'>X</button>
           <div id='form_holder'>
-            <div id='to_send_select'></div>
-            <span id='vertical_rule'></span>
-            <div id='files_select'></div>
+            <div id='information_holder'>
+              <div id='who_and_message'>
+                <input type="text" 
+                       name='username_input' 
+                       placeholder="friend's username or your own" 
+                       id="username_input" />
+                <textarea name="message" 
+                          id="message" 
+                          placeholder='enter a description or message'></textarea>
+              </div>
+              <div id='file_select'>
+                <button onClick={selectFile}>select</button>
+                {filePath && <p>Selected File: {filePath}</p>}
+              </div>
+            </div>
+            <div id='submit_button_holder'><h1>send</h1></div>
           </div>
         </div>
       </div>

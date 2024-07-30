@@ -1,5 +1,5 @@
 'use strict';
-import jsonwebtoken from 'jsonwebtoken';
+const jsonwebtoken = require('jsonwebtoken');
 
 module.exports.handler = async event => {
   const tokenStatement = event.authorizationToken;
@@ -7,7 +7,7 @@ module.exports.handler = async event => {
   const token = tokenStatementArr[1];
 
   if(tokenStatementArr.length !== 2 ||
-     authorizerArr[0] !== 'Bearer' ||
+     tokenStatementArr[0] !== 'Bearer' ||
      token.length === 0) {
        return generatePolicy('undefined', 'deny', event.methodArn);
      }
