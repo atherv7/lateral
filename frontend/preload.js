@@ -16,5 +16,6 @@ contextBridge.exposeInMainWorld("api", {
     login: (userInfo) => ipcRenderer.invoke('login', userInfo), 
     register: (userInfo) => ipcRenderer.invoke('register', userInfo), 
     selectFile: () => ipcRenderer.invoke('select-file'), 
-    friendRequest: (friendUsername) => ipcRenderer.invoke('send-friend-req', friendUsername)
+    friendRequest: (friendUsername) => ipcRenderer.invoke('send-friend-req', friendUsername), 
+    pendingRequests: (callback) => ipcRenderer.on('pending-requests', callback)
 }); 

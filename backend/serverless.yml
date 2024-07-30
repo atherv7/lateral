@@ -48,6 +48,14 @@ functions:
           method: get 
           cors: true 
           path: /version1/user/validate
+  findFriendRequest: 
+    handler: src/endpoints/findFriendReq.handler
+    events: 
+      - http: 
+          method: get
+          cors: true 
+          authorizer: validateUser 
+          path: /version1/friends/pending
   sendFriendRequest: 
     handler: src/endpoints/sendFriendReq.handler 
     events: 

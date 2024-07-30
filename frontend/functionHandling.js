@@ -1,6 +1,33 @@
 const { ipcMain, session, dialog } = require('electron'); 
 const fetch = require('electron-fetch').default; 
 
+const findFriendReqBackground = () => {
+    setInterval(async () => {
+        try {
+            const response = await fetch(
+                                   '', 
+                                    {
+                                        method: 'GET', 
+                                        headers: {
+                                            'Content-Type': 'application/json', 
+                                            'Content-Length': Buffer.byteLength(stringPostData),
+                                            'Access-Control-Allow-Origin': '*',
+                                            'Access-Control-Allow-Credentials': true
+                                        }
+                                    }); 
+            const data = await response.json(); 
+
+            if(data.friendRequests) {
+                mainWindow.webContents.send('pending-requests', data.friendRequests);
+            }
+        }
+        catch(error) {
+            console.log('there was an error trying to get pending friend requests'); 
+            console.log(error); 
+        }
+    }, (60*15)); 
+}
+
 const getToken = () => {
     return new Promise((resolve, reject) => {
         session.defaultSession.cookies.get({name: "jsonwebtoken"},

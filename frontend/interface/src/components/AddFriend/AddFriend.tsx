@@ -53,7 +53,7 @@ const AddFriend:React.FC = () => {
                            }}/>
                     <button id='friend_req_submit' onClick={sendFriendRequest}>send</button>
                 </div>
-                <div id='current_friends'></div>
+                <div id='current_friends_requests'></div>
                 <div id='friend_close_button'>close</div>
             </div>
         </div>

@@ -1,11 +1,12 @@
 'use strict'; 
-const getTokenFromHeader = require('./../utility').getTokenFromHeader;
+const getUsernameFromToken = require('../utility').getUsernameFromToken;
 const jwt = require('jsonwebtoken'); 
 const AWS = require('aws-sdk'); 
 
 module.exports.handler = async event => {
-    const token = getTokenFromHeader(event); 
-    if(!token) {
+    const username = getUsernameFromToken(event, process.env.JWT_SECRET); 
+    
+    if(!username) {
         return {
             statusCode: 500, 
             headers: {
@@ -19,7 +20,6 @@ module.exports.handler = async event => {
             })
         }
     }
-    const username = jwt.decode(token, process.env.JWT_SECRET).username; 
 
     const friendReqQuery = {
         TableName: process.env.DYNAMO_FRIEND_REQ_TABLE, 
@@ -43,5 +43,16 @@ module.exports.handler = async event => {
         console.log(error); 
     }
 
-    
+    return {
+        statusCode: 200, 
+        headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Credentials': true,
+            'Access-Control-Allow-Headers': 'Authorization'
+        }, 
+        body: JSON.stringify({
+            message: 'search for friend request successful', 
+            friendRequests: friendRequests 
+        })
+    };
 }; 

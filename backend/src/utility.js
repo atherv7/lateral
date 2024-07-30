@@ -1,3 +1,5 @@
+const jwt = require('jsonwebtoken'); 
+
 const getTokenFromHeader = (event) => {
     try {
         const authentication = event.headers.Authorization || event.header.authorization; 
@@ -14,7 +16,16 @@ const getTokenFromHeader = (event) => {
     catch(error) {
         console.log('there was an error getting jsonwebtoken'); 
         console.log(error); 
+        return null; 
     }
 }; 
 
-module.exports = {getTokenFromHeader}; 
+const getUsernameFromToken = (event, jwt_secret) => {
+    const token = getTokenFromHeader(event); 
+
+    const username = jwt.decode(token, jwt_secret); 
+
+    return (username) ? username : null; 
+}; 
+
+module.exports = {getTokenFromHeader, getUsernameFromToken}; 
