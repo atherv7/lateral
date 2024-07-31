@@ -1,12 +1,11 @@
 'use strict'; 
-const getTokenFromHeader = require('./../utility').getTokenFromHeader; 
+const getUsernameFromToken = require('./../utility').getUsernameFromToken; 
 const AWS = require('aws-sdk'); 
-const jsonwebtoken = require('jsonwebtoken'); 
 
 module.exports.handler = async event => {
-    const token = getTokenFromHeader(event); 
+    const senderUsername = getUsernameFromToken(event, process.env.JWT_SECRET); 
 
-    if(!token) {
+    if(!senderUsername) {
         return {
             statusCode: 500, 
             headers: {
@@ -21,7 +20,6 @@ module.exports.handler = async event => {
         }
     }
 
-    const senderUsername = jsonwebtoken.decode(token, process.env.JWT_SECRET).username; //used to jsonwebtoken.verify
     const friendUsername = JSON.parse(event.body).friendUsername; 
 
     const newRequest = {

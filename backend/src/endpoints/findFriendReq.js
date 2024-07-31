@@ -1,6 +1,5 @@
 'use strict'; 
 const getUsernameFromToken = require('../utility').getUsernameFromToken;
-const jwt = require('jsonwebtoken'); 
 const AWS = require('aws-sdk'); 
 
 module.exports.handler = async event => {
@@ -23,12 +22,12 @@ module.exports.handler = async event => {
 
     const friendReqQuery = {
         TableName: process.env.DYNAMO_FRIEND_REQ_TABLE, 
-        KeyConditionExpression: '#username = :username', 
+        KeyConditionExpression: "#username = :username", 
         ExpressionAttributeNames: {
-            '#username': 'friendUsername'
+            "#username": "friendUsername"
         }, 
         ExpressionAttributeValues: {
-            ':username': username
+            ":username": username
         }
     }; 
 
@@ -36,11 +35,24 @@ module.exports.handler = async event => {
 
     try {
         const dynamodb = new AWS.DynamoDB.DocumentClient(); 
-        friendReqQuery = await dynamodb.query(friendReqQuery).promise(); 
+        const response = await dynamodb.query(friendReqQuery).promise(); 
+        friendRequests = response.Items; 
     }
     catch(error) {
         console.log('there was an error finding friend requests'); 
         console.log(error); 
+        return {
+            statusCode: 500, 
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Credentials': true,
+                'Access-Control-Allow-Headers': 'Authorization'
+            }, 
+            body: JSON.stringify({
+                message: 'error finding friend requests', 
+                success: false
+            })
+        };
     }
 
     return {

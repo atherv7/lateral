@@ -73,9 +73,9 @@ FRIEND REQUEST TESTING LOG 3:
 **logging user 1** 
 username: testuser
 password: pear
-output: 
+output:
 {
-	"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3R1c2VyIiwiaWF0IjoxNzIyNDAxNTc0fQ.dYXh6MMOZ_Pq1ZnMFJQha7YJ76L5jrPny5rIrXtRiXQ"
+	"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3R1c2VyIiwiaWF0IjoxNzIyNDQ5MDI0fQ.CPIwdrF5E4UrX8DwZ8zkDrVxfMqtI1GtURvtI_src1w"
 }
 
 **logging user 2**
@@ -83,7 +83,7 @@ username: testing
 password: apple 
 output: 
 {
-	"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3RpbmciLCJpYXQiOjE3MjI0MDE2MjZ9.5kAYBz3T4lAMU0rWCEhmi-HgmbdOf5dPZYdOy8g-PEc"
+	"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3RpbmciLCJpYXQiOjE3MjI0NDkwNDB9.s070AmfFkMLGcUCcJgAwogaIRkbR_qMqmKUlJfyq99c"
 }
 
 **sending friend request from testing to testuser**
@@ -95,3 +95,14 @@ output:
 
 **checking for friend request from testuser** 
 output:
+{
+	"message": "search for friend request successful",
+	"friendRequests": [
+		{
+			"senderUsername": "testing",
+			"friendUsername": "testuser"
+		}
+	]
+}
+
+**third test for friend request functionality successful** 

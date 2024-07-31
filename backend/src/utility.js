@@ -23,7 +23,7 @@ const getTokenFromHeader = (event) => {
 const getUsernameFromToken = (event, jwt_secret) => {
     const token = getTokenFromHeader(event); 
 
-    const username = jwt.decode(token, jwt_secret); 
+    const username = jwt.decode(token, jwt_secret).username; 
 
     return (username) ? username : null; 
 }; 
