@@ -3,6 +3,32 @@ const path = require('path');
 const { app, BrowserWindow } = require('electron');
 const macintosh = process.platform == 'darwin';
 
+const findFriendReqBackground = () => {
+    setInterval(async () => {
+        try {
+            const response = await fetch(
+                                   'https://dadsso6fxc.execute-api.us-east-1.amazonaws.com/dev/version1/friends/pending', 
+                                    {
+                                        method: 'GET', 
+                                        headers: {
+                                            'Content-Type': 'application/json', 
+                                            'Access-Control-Allow-Origin': '*',
+                                            'Access-Control-Allow-Credentials': true
+                                        }
+                                    }); 
+            const data = await response.json(); 
+
+            if(data.friendRequests) {
+                mainWindow.webContents.send('pending-requests', data.friendRequests);
+            }
+        }
+        catch(error) {
+            console.log('there was an error trying to get pending friend requests'); 
+            console.log(error); 
+        }
+    }, (6000*15)); 
+}
+
 function createHomeWindow() {
     const homeWindow = new BrowserWindow({
         title: 'lateral',

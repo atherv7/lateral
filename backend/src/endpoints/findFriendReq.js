@@ -36,7 +36,7 @@ module.exports.handler = async event => {
 
     try {
         const dynamodb = new AWS.DynamoDB.DocumentClient(); 
-        friendReqQuery = await dynamodb.query(userTableQuery).promise(); 
+        friendReqQuery = await dynamodb.query(friendReqQuery).promise(); 
     }
     catch(error) {
         console.log('there was an error finding friend requests'); 
